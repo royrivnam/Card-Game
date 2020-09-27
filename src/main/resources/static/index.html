@@ -25,7 +25,7 @@
                 stompClient.connect(headers, function(frame) {
                     setConnected(true);
                     console.log('Connected: ' + frame);
-                    stompClient.subscribe('/topic/hotelIdAndLocale-'+hotelId+':'+locale, function(messageOutput) {
+                    stompClient.subscribe('/topic/cardIdAndLocale-'+cardId+':'+locale, function(messageOutput) {
                         showMessageOutput(JSON.parse(messageOutput));
                     }, headers);
 
