@@ -59,7 +59,7 @@ public class GameplayServiceImpl implements GameplayService {
   }
 
   @Transactional
-  private GameplayDto gameMoveData(Integer gameId, Integer pickedCardId) throws ResourceNotFoundException {
+  public GameplayDto gameMoveData(Integer gameId, Integer pickedCardId) throws ResourceNotFoundException {
     List<Card> cardList = cardRepoManagementService.findAll();
     Map<Integer,Card> cardMap = cardList.stream().collect(Collectors.toMap(card -> card.getId(),card -> card));
     Gameplay gameplay = gameplayRepoManagementService.getGameData(gameId);

@@ -14,9 +14,6 @@
 
             function connect() {
 
-                var token = document.getElementById('token').value;
-                var hotelId = document.getElementById('hotelId').value;
-                var userProfileId = document.getElementById('userProfileId').value;
                 var locale = document.getElementById('locale').value;
                 var serverUrl=document.getElementById('path').value;
                 var socket = new SockJS(serverUrl+'/ws/secured/register');
@@ -29,18 +26,6 @@
                     setConnected(true);
                     console.log('Connected: ' + frame);
                     stompClient.subscribe('/topic/hotelIdAndLocale-'+hotelId+':'+locale, function(messageOutput) {
-                        showMessageOutput(JSON.parse(messageOutput));
-                    }, headers);
-
-                     stompClient.subscribe('/topic/allAndLocale-'+locale, function(messageOutput) {
-                        showMessageOutput(JSON.parse(messageOutput));
-                    }, headers);
-
-                      stompClient.subscribe('/topic/userIdAndLocale-'+userProfileId+':'+locale, function(messageOutput) {
-                        showMessageOutput(JSON.parse(messageOutput));
-                    }, headers);
-
-                    stompClient.subscribe('/topic/userAndHotelIdAndLocale-'+userProfileId+':'+hotelId+':'+locale, function(messageOutput) {
                         showMessageOutput(JSON.parse(messageOutput));
                     }, headers);
 
@@ -74,8 +59,6 @@
 <div>
     <div>
         <input type="text" id="token" placeholder="Enter socket token"/>
-        <input type="text" id="hotelId" placeholder="Enter HotelId"/>
-        <input type="text" id="userProfileId" placeholder="Enter user profile id"/>
         <input type="text" id="locale" placeholder="Enter locale"/>
         <input type="text" id="path" placeholder="Enter server url"/>
     </div>

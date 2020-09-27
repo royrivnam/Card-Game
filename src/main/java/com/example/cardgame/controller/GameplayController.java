@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
@@ -44,4 +47,9 @@ public class GameplayController {
     return new ServiceResponse<CardDto>(gameplayService.getSingleSpecificCard(gameId, suit, color), HttpStatus.CREATED);
   }
 
+  @MessageMapping("/chat/{topic}")
+  @SendTo("/topic/messages")
+  public GameplayDto send(@DestinationVariable("topic") String topic, Integer gameId, Integer pickedCardId) throws Exception {
+    return gameplayService.gameMoveData(gameId, pickedCardId);
+  }
 }
