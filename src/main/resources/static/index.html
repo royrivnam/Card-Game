@@ -1,0 +1,96 @@
+<html>
+<head>
+    <title>Chat WebSocket</title>
+    <script src="./js/sockjs-0.3.4.js"></script>
+    <script src="./js/stomp.js"></script>
+    <script type="text/javascript">
+            var stompClient = null;
+
+            function setConnected(connected) {
+                document.getElementById('connect').disabled = connected;
+                document.getElementById('disconnect').disabled = !connected;
+                document.getElementById('response').innerHTML = '';
+            }
+
+            function connect() {
+
+                var token = document.getElementById('token').value;
+                var hotelId = document.getElementById('hotelId').value;
+                var userProfileId = document.getElementById('userProfileId').value;
+                var locale = document.getElementById('locale').value;
+                var serverUrl=document.getElementById('path').value;
+                var socket = new SockJS(serverUrl+'/ws/secured/register');
+                stompClient = Stomp.over(socket);
+                var headers = {
+                  'socketaccesstoken': token
+                };
+
+                stompClient.connect(headers, function(frame) {
+                    setConnected(true);
+                    console.log('Connected: ' + frame);
+                    stompClient.subscribe('/topic/hotelIdAndLocale-'+hotelId+':'+locale, function(messageOutput) {
+                        showMessageOutput(JSON.parse(messageOutput));
+                    }, headers);
+
+                     stompClient.subscribe('/topic/allAndLocale-'+locale, function(messageOutput) {
+                        showMessageOutput(JSON.parse(messageOutput));
+                    }, headers);
+
+                      stompClient.subscribe('/topic/userIdAndLocale-'+userProfileId+':'+locale, function(messageOutput) {
+                        showMessageOutput(JSON.parse(messageOutput));
+                    }, headers);
+
+                    stompClient.subscribe('/topic/userAndHotelIdAndLocale-'+userProfileId+':'+hotelId+':'+locale, function(messageOutput) {
+                        showMessageOutput(JSON.parse(messageOutput));
+                    }, headers);
+
+                }, errorFallback);
+            }
+
+            function errorFallback(frame) {
+                    console.log('Error: ' + frame);
+                }
+
+            function disconnect() {
+                if(stompClient != null) {
+                    stompClient.disconnect();
+                }
+                setConnected(false);
+                console.log("Disconnected");
+            }
+
+
+
+            function showMessageOutput(messageOutput) {
+                var response = document.getElementById('response');
+                var p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                p.appendChild(document.createTextNode(JSON.stringify(messageOutput)));
+                response.appendChild(p);
+            }
+        </script>
+</head>
+<body onload="disconnect()">
+<div>
+    <div>
+        <input type="text" id="token" placeholder="Enter socket token"/>
+        <input type="text" id="hotelId" placeholder="Enter HotelId"/>
+        <input type="text" id="userProfileId" placeholder="Enter user profile id"/>
+        <input type="text" id="locale" placeholder="Enter locale"/>
+        <input type="text" id="path" placeholder="Enter server url"/>
+    </div>
+    <br />
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+        <button id="disconnect" disabled="disabled" onclick="disconnect();">
+            Disconnect
+        </button>
+    </div>
+    <br />
+    <div id="conversationDiv">
+        <p id="response"></p>
+    </div>
+</div>
+
+</body>
+</html>
